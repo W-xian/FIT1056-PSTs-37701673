@@ -64,6 +64,13 @@ def find_students(term):
     # add them to your results list.
     # After the loop, if the results list is empty, print "No match found."
     # Otherwise, print the details for each student in the results list.
-    pass
+    search = []
+    for student in student_db:
+        if term.lower() in student.name.lower():
+            search.append(student)
+            print(f"  ID:{student.id}, Name: {student.name}, Enrolled in: {student.enrolled_in}")
+
+    if not search:
+        print("NO RECORD FOUND.")
 
 
