@@ -108,12 +108,24 @@ def front_desk_enrol(student_id, instrument):
         # TODO: If the student is not found, print an error message like "Error: Student ID not found."
         print(f"Error: Student ID {student_id} not found.")
 
+def find_teachers(term):
+    """Search teachers by name."""
+    print(f"\n--- Finding Teachers matching '{term}' ---")
+
+    for teacher in teacher_db:
+        if term.lower() in teacher.name.lower():
+            print(f"ID:{teacher.id}, Name:{teacher.name}")
+
 def front_desk_lookup(term):
     """High-level function to search everything."""
     print(f"\n--- Performing lookup for '{term}' ---")
     find_students(term)
     find_teachers(term)
 
+
+# --- Main Application ---
+def main():
+    """Runs the main interactive menu for the receptionist."""
     # Pre-populate some data for easy testing
     add_teacher("Dr. Keys", "Piano")
     add_teacher("Ms. Fret", "Guitar")
