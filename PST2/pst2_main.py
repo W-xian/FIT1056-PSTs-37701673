@@ -1,4 +1,4 @@
-# pst2_main.py - The Persistent Application
+  # pst2_main.py - The Persistent Application
 
 import json
 import datetime
@@ -39,6 +39,19 @@ def save_data(path=DATA_FILE):
 
 # --- Full CRUD for Core Data ---
 # Note: We are now working with lists of dictionaries, not lists of objects.
+def add_student(name, enrolled_in):
+    student_id = app_data["next_student_id"]
+
+    new_student = {
+        "id": student_id,
+        "name": name,
+        "enrolled_in": [enrolled_in]
+    }
+
+    app_data["students"].append(new_student)
+    app_data["next_student_id"] += 1
+
+    print(f"Student '{name}' added with ID {student_id}.")
 
 def add_teacher(name, speciality):
     """Adds a teacher dictionary to the data store."""
@@ -129,7 +142,7 @@ def print_student_card(student_id):
     for s in app_data['students']:
         if s['id'] == student_id:
             student_to_print = s
-            break
+            
     
     if student_to_print:
         # TODO: Create a filename, e.g., f"{student_id}_card.txt".
@@ -154,38 +167,48 @@ def main():
 
     while True:
         print("\n===== MSMS v2 (Persistent) =====")
-        print("1. Check-in Student")
-        print("2. Print Student Card")
-        print("3. Update Teacher Info")
-        print("4. Remove Student")
+        print("1. Register New Student")
+        print("2. Check-in Student")
+        print("3. Print Student Card")
+        print("4. Update Teacher Info")
+        print("5. Remove Student")
         print("q. Quit and Save")
         
         choice = input("Enter your choice: ")
         
         made_change = False # A flag to track if we need to save
         if choice == '1':
-            # TODO: Get student_id and course_id from user, then call check_in().
+            name = input("Enter student name: ")
+            enrolled_in = input("Enter course ID: ")
+
+            add_student(name, enrolled_in)
+            made_change = True
+
+            
+        elif choice == '2':
             student_id = int(input("Enter Student ID: "))
             course_id = input("Enter Course_ID:" )
             check_in(student_id, course_id)
             made_change = True
-        elif choice == '2':
-            # TODO: Get student_id, then call print_student_card().
-            student_id = int(input("Enter student ID: "))
-            print_student_card(student_id)
-            # No change made, so no save needed
+
         elif choice == '3':
             # TODO: Get teacher_id and new details, then call update_teacher().
             # Example: update_teacher(1, speciality="Advanced Piano")
-            teacher_id = int(input("Enter teacher ID: "))
-            specialty = input("Enter new speaciality: ")
-            update_teacher(teacher_id, speciality=speciality)
-            made_change = True
+            student_id = int(input("Enter student ID: "))
+            print_student_card(student_id)
+
         elif choice == '4':
             # TODO: Get student_id, then call remove_student().
+            teacher_id = int(input("Enter teacher ID: "))
+            speciality = input("Enter new speaciality: ")
+            update_teacher(teacher_id, speciality=speciality)
+            made_change = True
+            
+        elif choice == '5':
             student_id = int(input("Enter student ID: "))
             remove_student (student_id) 
             made_change = True
+
         elif choice.lower() == 'q':
             print("Saving final changes and exiting.")
             break
