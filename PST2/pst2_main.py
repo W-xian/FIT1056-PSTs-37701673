@@ -61,7 +61,7 @@ def remove_student(student_id):
     for s in app_data["students"]:
         if s['id'] == student_id:
             app_data["students"].remove(s)
-            print(f"Student {student_id}updated. ")
+            print(f"Student {student_id} removed. ")
             return
     print(f"Error: Student with ID {student_id} is not found")
 
@@ -83,9 +83,9 @@ def update_teacher(teacher_id, **fields):
 # TODO: Implement remove_teacher() and update_student() using the patterns above.
 
 def update_student (student_id, **fields):
-    # TODO: Loop through the app_data['teachers'] list.
+    # TODO: Loop through the app_data['students'] list.
     for student in app_data['students']:
-        # TODO: If a teacher's 'id' matches teacher_id:
+        # TODO: If a student's 'id' matches student_id:
         if student['id'] == student_id:
             # Use the .update() method on the teacher dictionary to apply the 'fields'.
             student.update(fields)
@@ -165,8 +165,8 @@ def main():
         made_change = False # A flag to track if we need to save
         if choice == '1':
             # TODO: Get student_id and course_id from user, then call check_in().
-            student_id == int(input("Enter Student ID: "))
-            course_id = int(input(course_id))
+            student_id = int(input("Enter Student ID: "))
+            course_id = input("Enter Course_ID:" )
             check_in(student_id, course_id)
             made_change = True
         elif choice == '2':
@@ -179,7 +179,7 @@ def main():
             # Example: update_teacher(1, speciality="Advanced Piano")
             teacher_id = int(input("Enter teacher ID: "))
             specialty = input("Enter new speaciality: ")
-            update_teacher(teacher_id, specialty)
+            update_teacher(teacher_id, speciality=speciality)
             made_change = True
         elif choice == '4':
             # TODO: Get student_id, then call remove_student().
