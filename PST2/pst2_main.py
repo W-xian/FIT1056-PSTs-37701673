@@ -64,31 +64,31 @@ def update_teacher(teacher_id, **fields):
             return
     print(f"Error: Teacher with ID {teacher_id} is not found.")
 
-def remove_student(student_id):
-    """Removes a student from the data store."""
-    # TODO: Find the student dictionary in app_data['students'] with the matching ID.
-    # If found, use the .remove() method on the list to delete it.
-    # A list comprehension is a clean way to do this:
-    # app_data['students'] = [s for s in app_data['students'] if s['id'] != student_id]
-    for student in app_data["student"]:
-        if student ['id'] == student_id:
-            student.update(fields)
-            print(f"Student {student_id}updated. ")
-            return
-    print(f"Error: Student with ID {student_id} is not found")
+
     
 # TODO: Implement remove_teacher() and update_student() using the patterns above.
-def add_student(name, speciality):
-    """Adds a teacher dictionary to the data store."""
-    # TODO: Get the next teacher ID from app_data['next_teacher_id'].
-    student_id = app_data['next_students_id']
-    # TODO: Create a new teacher dictionary with 'id', 'name', and 'speciality' keys.
-    new_students = {"id": student_id, "name": name, "speciality": speciality}
-    # TODO: Append the new dictionary to the app_data['teachers'] list.
-    app_data['students'].append(new_students)
-    # TODO: Increment the 'next_teacher_id' in app_data.
-    app_data['next_students_id'] += 1
-    print(f"Core: Student '{name}' added.")
+
+def update_student (student_id, **fields):
+     TODO: Loop through the app_data['teachers'] list.
+    for student in app_data['students']:
+        # TODO: If a teacher's 'id' matches teacher_id:
+        if student['id'] == student_id:
+            # Use the .update() method on the teacher dictionary to apply the 'fields'.
+            student.update(fields)
+            print(f" Student {student_id} updated.")
+            return
+    print(f"Error: Student with ID {student_id} is not found.")
+
+def remove_teacher(teacher_id):
+    for teacher in app_data["teachers"]:
+        if teacher["id"] == teacher_id:
+            app_data["teachers"].remove(teacher)
+            print(f"Teacher {teacher_id} removed.")
+            return
+
+    print(f"Error: Teacher with ID {teacher_id} is not found.")
+
+
 
 # --- New Receptionist Features ---
 def check_in(student_id, course_id, timestamp=None):
