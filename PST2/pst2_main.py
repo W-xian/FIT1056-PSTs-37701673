@@ -52,6 +52,20 @@ def add_teacher(name, speciality):
     app_data['next_teacher_id'] += 1
     print(f"Core: Teacher '{name}' added.")
 
+def remove_student(student_id):
+    """Removes a student from the data store."""
+    # TODO: Find the student dictionary in app_data['students'] with the matching ID.
+    # If found, use the .remove() method on the list to delete it.
+    # A list comprehension is a clean way to do this:
+    # app_data['students'] = [s for s in app_data['students'] if s['id'] != student_id]
+    for s in app_data["students"]:
+        if s['id'] == student_id:
+            app_data["students"].remove(s)
+            print(f"Student {student_id}updated. ")
+            return
+    print(f"Error: Student with ID {student_id} is not found")
+
+
 def update_teacher(teacher_id, **fields):
     """Finds a teacher by ID and updates their data with provided fields."""
     # TODO: Loop through the app_data['teachers'] list.
@@ -69,7 +83,7 @@ def update_teacher(teacher_id, **fields):
 # TODO: Implement remove_teacher() and update_student() using the patterns above.
 
 def update_student (student_id, **fields):
-     TODO: Loop through the app_data['teachers'] list.
+    # TODO: Loop through the app_data['teachers'] list.
     for student in app_data['students']:
         # TODO: If a teacher's 'id' matches teacher_id:
         if student['id'] == student_id:
@@ -170,7 +184,7 @@ def main():
         elif choice == '4':
             # TODO: Get student_id, then call remove_student().
             student_id = int(input("Enter student ID: "))
-            remove_student(student_id) 
+            remove_student (student_id) 
             made_change = True
         elif choice.lower() == 'q':
             print("Saving final changes and exiting.")
