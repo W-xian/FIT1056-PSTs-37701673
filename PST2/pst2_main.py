@@ -148,7 +148,7 @@ def print_student_card(student_id):
         # TODO: Create a filename, e.g., f"{student_id}_card.txt".
         filename = f"{student_id}_card.txt"
         # TODO: Open the file in write mode ('w').
-        with open(filename, 'a') as f:
+        with open(filename, 'w') as f:
             # Write the student's details to the file in a nice format.
             f.write("========================\n")
             f.write(f"  MUSIC SCHOOL ID BADGE\n")
