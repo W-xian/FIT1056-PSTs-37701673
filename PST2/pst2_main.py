@@ -204,7 +204,6 @@ def main():
             name = input("Enter teacher name: ")
             enrolled_in = input("Enter course_id: ")
 
-
             add_teacher(name, enrolled_in)
             made_change = True
             
@@ -218,7 +217,7 @@ def main():
         elif choice == '6':
             student_id = int(input("Enter Student ID: "))
             speciality = input("Enter new speaciality: ")
-            update_teacher(student_id, speciality=speciality)
+            update_student(student_id, name=new_name)
             made_change = True
 
         elif choice == '7':
