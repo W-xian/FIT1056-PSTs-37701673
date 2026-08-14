@@ -1,0 +1,113 @@
+# Music School Management System (MSMS)
+
+## Overview
+The project was initially developed as an in-memory
+prototype in PST1. In PST2, the system has been extended into a persistent application that stores data in a JSON file. This means that student, teacher, and attendance information can be saved and loaded even after the program is closed.
+
+## Project Files
+### pst2_main.py
+This is mai python program that consist function and menu interface.
+
+### msms.json
+Mainly to store the data 
+-Students
+-Teachers
+-Attendance records
+-Next student ID
+-Next teacher ID
+
+## Student card file
+The program can generate student ID cards as text files.
+For example 1_card.txt and follow by 2_card.txt
+
+## Global dictionary
+the golbal dictonary name as app data to manage the system data. Both students and teachers are stored as dictionaries inside lists.
+
+For example, a student contains:
+-id
+-name
+-enrolled_in
+
+A teacher contains:
+-id
+-name
+-speciality
+
+The data is saved to msms.json using JSON persistence.
+
+## Student Management
+### add_student(name, enrolled_in)
+Registers a new student.
+The function:
+-Gets the next available student ID
+-Stores the student's name
+-Stores the student's enrolled course
+-Adds the student to the student list
+-Increases the next student ID
+
+### update_student(student_id, **fields)
+Searches for a student using their ID and updates the provided information.
+
+### remove_student(student_id)
+Searches for a student using their ID and removes the student from the system. If the student cannot be found, an error message is displayed.
+
+## Teacher Management
+### add_teacher(name, speciality)
+Adds a new teacher to the system.
+The function:
+-Gets the next available teacher ID
+-Stores the teacher's name
+-Stores the teacher's speciality
+-Adds the teacher to the teacher list
+-Increases the next teacher ID
+
+### update_teacher(teacher_id, **fields)
+-Finds a teacher using their ID and updates the provided information.
+
+### remove_teacher(teacher_id)
+Finds a teacher using their ID and removes the teacher from the system.If the teacher cannot be found, an error message is displayed.
+
+
+## Menu options
+
+1. Register New Student
+2. Check-in Student
+3. Print Student Card
+4. Add Teacher Info
+5. Update Teacher Info
+6. Update Student Info
+7. Remove Student
+q. Quit and Save
+
+## Option 1 Register New Student
+The student will be added to the system.
+Prompts the user for
+-student name 
+-course ID
+
+## Option 2 Check-in Student
+A new attendance record is created with the current timestamp.
+Prompts the user for:
+-Student ID
+-Course ID
+
+## Option 3 Print Student Card
+Prompts for a student ID and generates a student card text file.
+
+## Option 4 Add Teacher Info
+Prompts for the teacher's name and speciality and adds the teacher to the system.
+
+## Option 5 Update Teacher Info
+Prompts for a teacher ID and allows the teacher's speciality to be updated.
+
+## Option 6 Update Student Info
+Allows existing student information to be updated.
+
+## Option 7 Remove Student
+Prompts for a student ID and removes the matching student from the system.
+
+## Option Q Quit and Save
+Saves all current data to msms.json before closing the application.
+
+
+
