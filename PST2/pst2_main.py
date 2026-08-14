@@ -63,7 +63,7 @@ def add_teacher(name, speciality):
     app_data['teachers'].append(new_teacher)
     # TODO: Increment the 'next_teacher_id' in app_data.
     app_data['next_teacher_id'] += 1
-    print(f"Core: Teacher '{name}' added.")
+    print(f"Core: Teacher '{name}' added with ID {teacher_id}")
 
 def remove_student(student_id):
     """Removes a student from the data store."""
@@ -148,7 +148,7 @@ def print_student_card(student_id):
         # TODO: Create a filename, e.g., f"{student_id}_card.txt".
         filename = f"{student_id}_card.txt"
         # TODO: Open the file in write mode ('w').
-        with open(filename, 'w') as f:
+        with open(filename, 'a') as f:
             # Write the student's details to the file in a nice format.
             f.write("========================\n")
             f.write(f"  MUSIC SCHOOL ID BADGE\n")
@@ -170,8 +170,10 @@ def main():
         print("1. Register New Student")
         print("2. Check-in Student")
         print("3. Print Student Card")
-        print("4. Update Teacher Info")
-        print("5. Remove Student")
+        print("4. Add Teacher info")
+        print("5. Update Teacher Info")
+        print("6. Update Student Info")
+        print("7. Remove Student")
         print("q. Quit and Save")
         
         choice = input("Enter your choice: ")
@@ -181,10 +183,9 @@ def main():
             name = input("Enter student name: ")
             enrolled_in = input("Enter course ID: ")
 
-            add_student(name, enrolled_in)
+            add_student(name, enrolled_in )
             made_change = True
 
-            
         elif choice == '2':
             student_id = int(input("Enter Student ID: "))
             course_id = input("Enter Course_ID:" )
@@ -198,13 +199,29 @@ def main():
             print_student_card(student_id)
 
         elif choice == '4':
-            # TODO: Get student_id, then call remove_student().
+            # TODO: Get teacher_id and new details, then call update_teacher().
+            # Example: update_teacher(1, speciality="Advanced Piano")
+            name = input("Enter teacher name: ")
+            enrolled_in = input("Enter course_id: ")
+
+
+            add_teacher(name, enrolled_in)
+            made_change = True
+            
+
+        elif choice == '5':
             teacher_id = int(input("Enter teacher ID: "))
             speciality = input("Enter new speaciality: ")
             update_teacher(teacher_id, speciality=speciality)
             made_change = True
-            
-        elif choice == '5':
+
+        elif choice == '6':
+            student_id = int(input("Enter Student ID: "))
+            speciality = input("Enter new speaciality: ")
+            update_teacher(student_id, speciality=speciality)
+            made_change = True
+
+        elif choice == '7':
             student_id = int(input("Enter student ID: "))
             remove_student (student_id) 
             made_change = True
@@ -223,6 +240,4 @@ def main():
 # --- Program Start ---
 if __name__ == "__main__":
     main()
-
-
 
