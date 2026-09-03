@@ -1,6 +1,8 @@
 import json
 from app.student import StudentUser
 from app.teacher import TeacherUser, Course
+# ... inside the ScheduleManager class ...
+import datetime
 
 class ScheduleManager:
     """The main controller for all business logic and data handling."""
@@ -73,40 +75,137 @@ class ScheduleManager:
         with open(self.data_path, 'w') as f:
             json.dump(data_to_save, f, indent=4)
 
-# ... inside the ScheduleManager class ...
-import datetime
-
-def check_in(self, student_id, course_id):
-    """Records a student's attendance for a course after validation."""
-    # This implementation remains the same, but it will now function correctly.
-    student = self.find_student_by_id(student_id)
-    course = self.find_course_by_id(course_id)
+    def get_lessons_by_day(self,day):
+        lessons_for_day = []
     
-    if not student or not course:
-        print("Error: Check-in failed. Invalid Student or Course ID.")
-        return False
+        for course in self.courses:
+            for lesson in course.lessons:
+                if lesson["day"].lower() == day.lower():
+                    lessons_for_day.append({
+                        "course_name":course.name,
+                        "instrument":course.instrument,
+                        "teacher_id":course.teacher_id,
+                        "lesson_id":lesson["lesson_id"],
+                        "start_time":lesson["start_time"],
+                        "room":lesson["room"]
+    
+                    })
+        return lessons_for_day
+                
+    def add_student(self, name):
         
-    timestamp = datetime.datetime.now().isoformat()
-    check_in_record = {"student_id": student_id, "course_id": course_id, "timestamp": timestamp}
+        student_id = self.next_student_id
+
+        new_student = StudentUser(student_id, name)
+        self.students.append(new_student)
+        self.next_student_id += 1
+
+        self._save_data()
+
+        print(f"Student '{name}' added with ID {student_id}.")  
+
+    def add_teacher(self, name, speciality):
+        teacher_id = self.next_teacher_id
+        new_teacher = TeacherUser(teacher_id, name, speciality)
+        self.teachers.append(new_teacher)
+        self.next_teacher_id += 1
+        self._save_data()
+        print(f"Core: Teacher '{name}' added with ID {teacher_id}")
+
+    def add_course(self, name, instrument, teacher_id):
+        course_id =self.next_course_id
+        new_course = Course(course_id, name ,instrument, teacher_id)
+        self.courses.append(new_course)
+        self.next_course_id += 1
+        self._save_data()
+        print(f"Course '{name}' added successfully with ID {course_id}.")
+
+    def list_students(self):
+        print("\n--- Student List ---")
+        if not self.students:
+            print("No students in the system.")
+            return
     
-    # This line will now work without causing an AttributeError.
-    self.attendance_log.append(check_in_record)
-    self._save_data() # This will now correctly save the attendance log.
-    print(f"Success: Student {student.name} checked into {course.name}.")
-    return True
+        for student in self.students:
+            print(f"  ID: {student.id}, Name: {student.name}, Enrolled in: {student.enrolled_course_ids}")
 
-# TODO: Also implement find_student_by_id and find_course_by_id helper methods.  
+    def list_teachers(self):
+        print("\n--- Teacher List ---")
+        if not self.students:
+            print("No teacher in the system.")
+            return
+            
+        for teacher in self.teachers:
+            print(f"  ID: {teacher.id}, Name: {teacher.name}, Speciality: {teacher.speciality}")
 
-def find_student_by_id(self, student_id):
-    for student in self.students:
-        if student.id == student_id:
-            return student
+    def update_student (self,student_id, **fields):
+        for student in self.students:
+            if student.id == student_id:
+                for key,value in fields.items():
+                    setattr(student,key,value)
 
-    return None        
+            self._save_data()
+            print(f" Student {student_id} updated.")
+            return
+        
+        print(f"Error: Student with ID {student_id} is not found.")
 
-def find_course_by_id(self, course_id):
-    for course in self.courses:
-        if course.id == course_id:
-            return course
+    def update_teacher(self, teacher_id, **fields):
+        for teacher in self.teachers:
+            if teacher.id == teacher_id:
+                for key,value in fields.items():
+                    setattr(teacher,key,value)
+             
+            self._save_data
+            print(f"Teacher {teacher_id} updated.")
+            return
 
-    return None
+        print(f"Error: Teacher with ID {teacher_id} is not found.")
+
+    def remove_student(self, student_id):
+        for s in self.students:
+            if s.id == student_id:
+                self.students.remove(s)
+                print(f"Student {s.id} removed. ")
+                return
+        print(f"Error: Student with ID {student_id} is not found")
+        self._save_data
+
+    def remove_teacher(self,teacher_id):
+        for t in self.teacher:
+            if t.id == teacher_id:
+                self.teachers.remove(t)
+                print(f"Teacher {t.id} removed.")
+            return
+        
+        print(f"Error: Teacher with ID {teacher_id} is not found.")
+        self._save_data
+
+    def check_in(self, student_id, course_id):
+        student = self.find_student_by_id(student_id)
+        course = self.find_course_by_id(course_id)
+
+        if not student or not course:
+            print("Error: Check-in failed. Invalid Student or Course ID.")
+            return False
+        timestamp = datetime.datetime.now().isoformat()
+        check_in_record = {"student_id": student_id, "course_id": course_id, "timestamp": timestamp}
+
+        self.attendance_log.append(check_in_record)
+        self._save_data() # This will now correctly save the attendance log.
+        print(f"Success: Student {student.name} checked into {course.name}.")
+        return True
+
+    def find_student_by_id(self, student_id):
+        for student in self.students:
+            if student.id == student_id:
+                return student
+        return None        
+
+    def find_course_by_id(self, course_id):
+        for course in self.courses:
+            if course.id == course_id:
+                return course
+        return None
+
+ 

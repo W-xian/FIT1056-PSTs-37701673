@@ -14,6 +14,42 @@
             "enrolled_course_ids": [
                 102
             ]
+        },
+        {
+            "id": 3,
+            "name": "koay",
+            "enrolled_course_ids": [
+                1047
+            ]
+        },
+        {
+            "id": 4,
+            "name": "emily",
+            "enrolled_course_ids": [
+                1050
+            ]
+        },
+        {
+            "id": 5,
+            "name": "koay",
+            "enrolled_course_ids": [
+                103
+            ]
+        },
+        {
+            "id": 6,
+            "name": "chloe",
+            "enrolled_course_ids": []
+        },
+        {
+            "id": 7,
+            "name": "",
+            "enrolled_course_ids": []
+        },
+        {
+            "id": 8,
+            "name": "angeline",
+            "enrolled_course_ids": []
         }
     ],
     "teachers": [
@@ -26,6 +62,16 @@
             "id": 2,
             "name": "Mr. David Fret",
             "speciality": "Guitar"
+        },
+        {
+            "id": 3,
+            "name": "l",
+            "speciality": "piano"
+        },
+        {
+            "id": 4,
+            "name": "h",
+            "speciality": "piano"
         }
     ],
     "courses": [
@@ -75,8 +121,25 @@
             "instrument": "Piano",
             "teacher_id": 1,
             "enrolled_student_ids": [
-                1
+                1,
+                5
             ],
+            "lessons": []
+        },
+        {
+            "id": 104,
+            "name": "1088",
+            "instrument": "guitar",
+            "teacher_id": 3,
+            "enrolled_student_ids": [],
+            "lessons": []
+        },
+        {
+            "id": 105,
+            "name": "1045",
+            "instrument": "guitar",
+            "teacher_id": 4,
+            "enrolled_student_ids": [],
             "lessons": []
         }
     ],
@@ -90,6 +153,19 @@
             "student_id": 2,
             "course_id": 102,
             "timestamp": "2025-07-14T16:02:45.654321"
+        },
+        {
+            "student_id": 1,
+            "course_id": 101,
+            "timestamp": "2026-09-03T11:40:32.173261"
+        },
+        {
+            "student_id": 6,
+            "course_id": 105,
+            "timestamp": "2026-09-03T11:55:03.806565"
         }
-    ]
+    ],
+    "next_student_id": 9,
+    "next_teacher_id": 5,
+    "next_course_id": 106
 }
