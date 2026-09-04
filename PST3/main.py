@@ -2,9 +2,11 @@
 from app.schedule import ScheduleManager
 
 def front_desk_daily_roster(manager, day):
-    """Displays a pretty table of all lessons on a given day."""
-    print(f"\n--- Daily Roster for {day} ---")
     lessons = manager.get_lessons_by_day(day)
+    print(f"\n--- Daily Roster for {day} ---")
+    if not lessons:
+        print("No lessons scheduled for this day.")
+    
     for lesson in lessons:
         print(f"Course: {lesson['course_name']}")
         print(f"Instrument: {lesson['instrument']}")
@@ -23,8 +25,11 @@ def switch_course(manager, student_id, from_course_id, to_course_id):
         print("Error:Invalid student or course ID.")
         return False 
 
-    if from_course_id in student.enrolled_course_ids:
-        student.enrolled_course_ids.remove(from_course_id)
+    if from_course_id not in student.enrolled_course_ids:
+        print("Error: Student is not enrolled in the current course.")
+        return False
+
+    student.enrolled_course_ids.remove(from_course_id)
 
     if student_id in from_course.enrolled_student_ids:
         from_course.enrolled_student_ids.remove(student_id)
@@ -62,8 +67,18 @@ def main():
         choice = input("Enter choice: ")
         if choice == '1':
             name = (input("Enter student name: "))
-        
-            manager.add_student(name)
+
+            print("\n--- Available Courses ---")
+            for course in manager.courses:
+                print(f"{course.id}. {course.name} ({course.instrument})")
+
+            try:
+                  course_id = int(input("Enter course ID: "))
+            except ValueError:
+                  print("Sorry, please enter a number.")
+                  continue
+            manager.add_student(name, course_id)
+    
 
         elif choice == '2':
             name = input("Enter teacher name: ")
@@ -94,6 +109,8 @@ def main():
             try:
                   student_id = int(input("Enter student ID: "))
                   course_id = int(input("Enter course ID: "))
+
+                  manager.check_in(student_id, course_id)
             except ValueError:
                   print("Sorry, please enter a number.")
                   continue
@@ -113,16 +130,21 @@ def main():
         elif choice == '9':
             student_id = int(input("Enter student ID: "))
             field = input("What do you want to update? ")
-            new_value = input ("Enter new value: ")
-            
+            if field != "name":
+                print("Error: You can only update the student name.")
+                continue
+            new_value = input("Enter new value: ")
             manager.update_student(student_id,**{field: new_value})
 
         elif choice == '10':
             teacher_id = int(input("Enter teacher ID: "))
             field = input("What do you want to update? ")
-            new_value = input ("Enter new value: ")
-                    
-            manager.update_student(teacher_id,**{field: new_value})
+            if field not in["name","speciality"]:
+                print("Error: you can only update name or speciality.")
+                continue
+
+            new_value = input("Enter new value: ")                    
+            manager.update_teacher(teacher_id,**{field: new_value})
 
         elif choice == '11':
             student_id = int(input("Enter student ID: "))

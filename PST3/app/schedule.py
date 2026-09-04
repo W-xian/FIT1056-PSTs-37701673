@@ -75,34 +75,44 @@ class ScheduleManager:
         with open(self.data_path, 'w') as f:
             json.dump(data_to_save, f, indent=4)
 
-    def get_lessons_by_day(self,day):
+    def get_lessons_by_day(self, day):
         lessons_for_day = []
-    
         for course in self.courses:
             for lesson in course.lessons:
+
                 if lesson["day"].lower() == day.lower():
                     lessons_for_day.append({
-                        "course_name":course.name,
-                        "instrument":course.instrument,
-                        "teacher_id":course.teacher_id,
-                        "lesson_id":lesson["lesson_id"],
-                        "start_time":lesson["start_time"],
-                        "room":lesson["room"]
-    
-                    })
+                    "course_name": course.name,
+                    "instrument": course.instrument,
+                    "teacher_id": course.teacher_id,
+                    "lesson_id": lesson["lesson_id"],
+                    "start_time": lesson["start_time"],
+                    "room": lesson["room"]
+                })
         return lessons_for_day
                 
-    def add_student(self, name):
+    def add_student(self, name, course_id):
+        course = self.find_course_by_id(course_id)
+
+        if not course:
+            print("Error: Course not found.")
+            return
         
         student_id = self.next_student_id
-
         new_student = StudentUser(student_id, name)
+
+        new_student.enrolled_course_ids.append(course_id)
+        course.enrolled_student_ids.append(student_id)
+
         self.students.append(new_student)
         self.next_student_id += 1
 
         self._save_data()
 
-        print(f"Student '{name}' added with ID {student_id}.")  
+        print(
+            f"Student '{name}' added with ID {student_id}"
+            f" and enrolled in '{course.name}'."
+        )
 
     def add_teacher(self, name, speciality):
         teacher_id = self.next_teacher_id
@@ -110,9 +120,19 @@ class ScheduleManager:
         self.teachers.append(new_teacher)
         self.next_teacher_id += 1
         self._save_data()
-        print(f"Core: Teacher '{name}' added with ID {teacher_id}")
+        print(f"Core: Teacher '{name}' added successfully with ID {teacher_id}. ")
 
     def add_course(self, name, instrument, teacher_id):
+        teacher = None 
+
+        for t in self.teachers:
+            if t.id == teacher_id:
+                teacher = t 
+                break
+        if not teacher:
+            print("Error: Teacher not found.")
+            return
+        
         course_id =self.next_course_id
         new_course = Course(course_id, name ,instrument, teacher_id)
         self.courses.append(new_course)
@@ -131,7 +151,7 @@ class ScheduleManager:
 
     def list_teachers(self):
         print("\n--- Teacher List ---")
-        if not self.students:
+        if not self.teachers:
             print("No teacher in the system.")
             return
             
@@ -144,9 +164,9 @@ class ScheduleManager:
                 for key,value in fields.items():
                     setattr(student,key,value)
 
-            self._save_data()
-            print(f" Student {student_id} updated.")
-            return
+                self._save_data()
+                print(f" Student {student_id} updated.")
+                return
         
         print(f"Error: Student with ID {student_id} is not found.")
 
@@ -156,9 +176,9 @@ class ScheduleManager:
                 for key,value in fields.items():
                     setattr(teacher,key,value)
              
-            self._save_data
-            print(f"Teacher {teacher_id} updated.")
-            return
+                self._save_data()
+                print(f"Teacher {teacher_id} updated.")
+                return
 
         print(f"Error: Teacher with ID {teacher_id} is not found.")
 
@@ -166,21 +186,26 @@ class ScheduleManager:
         for s in self.students:
             if s.id == student_id:
                 self.students.remove(s)
+
+                self._save_data()
+
                 print(f"Student {s.id} removed. ")
                 return
         print(f"Error: Student with ID {student_id} is not found")
-        self._save_data
+    
 
     def remove_teacher(self,teacher_id):
-        for t in self.teacher:
+        for t in self.teachers:
             if t.id == teacher_id:
                 self.teachers.remove(t)
+
+                self._save_data()
+
                 print(f"Teacher {t.id} removed.")
-            return
+                return
         
         print(f"Error: Teacher with ID {teacher_id} is not found.")
-        self._save_data
-
+        
     def check_in(self, student_id, course_id):
         student = self.find_student_by_id(student_id)
         course = self.find_course_by_id(course_id)
@@ -188,14 +213,23 @@ class ScheduleManager:
         if not student or not course:
             print("Error: Check-in failed. Invalid Student or Course ID.")
             return False
+        if course_id not in student.enrolled_course_ids:
+            print("Error: Student is not enrolled in this course.")
+            return False
         timestamp = datetime.datetime.now().isoformat()
-        check_in_record = {"student_id": student_id, "course_id": course_id, "timestamp": timestamp}
 
+        check_in_record = {
+        "student_id": student_id,
+        "course_id": course_id,
+        "timestamp": timestamp
+        }
         self.attendance_log.append(check_in_record)
-        self._save_data() # This will now correctly save the attendance log.
+        self._save_data()
+
         print(f"Success: Student {student.name} checked into {course.name}.")
         return True
 
+    
     def find_student_by_id(self, student_id):
         for student in self.students:
             if student.id == student_id:
