@@ -1,0 +1,123 @@
+{
+    "students": [
+        {
+            "id": 2,
+            "name": "Marrisa",
+            "enrolled_course_ids": [
+                101
+            ]
+        },
+        {
+            "id": 16,
+            "name": "Kuek Pei Jee",
+            "enrolled_course_ids": [
+                101
+            ]
+        }
+    ],
+    "teachers": [
+        {
+            "id": 1,
+            "name": "Sarah Ooi",
+            "speciality": "piano"
+        },
+        {
+            "id": 3,
+            "name": "Dr. Jayven",
+            "speciality": "guitar"
+        },
+        {
+            "id": 5,
+            "name": "Dr. Harvey",
+            "speciality": "trumpet"
+        }
+    ],
+    "courses": [
+        {
+            "id": 101,
+            "name": "Beginner  Piano",
+            "instrument": "Piano",
+            "teacher_id": 1,
+            "enrolled_student_ids": [
+                1,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16
+            ],
+            "lessons": [
+                {
+                    "lesson_id": 1,
+                    "day": "Monday",
+                    "start_time": "16:00",
+                    "room": "Room A"
+                },
+                {
+                    "lesson_id": 2,
+                    "day": "Wednesday",
+                    "start_time": "16:00",
+                    "room": "Room A"
+                }
+            ]
+        },
+        {
+            "id": 102,
+            "name": "Acoustic Guitar Fundamentals",
+            "instrument": "Guitar",
+            "teacher_id": 2,
+            "enrolled_student_ids": [
+                2
+            ],
+            "lessons": [
+                {
+                    "lesson_id": 3,
+                    "day": "Tuesday",
+                    "start_time": "17:00",
+                    "room": "Room C"
+                }
+            ]
+        },
+        {
+            "id": 103,
+            "name": "Trumpet",
+            "instrument": "trumpet",
+            "teacher_id": 5,
+            "enrolled_student_ids": [
+                1
+            ],
+            "lessons": []
+        }
+    ],
+    "attendance": [
+        {
+            "student_id": 1,
+            "course_id": 101,
+            "timestamp": "2025-07-14T15:58:30.123456"
+        },
+        {
+            "student_id": 2,
+            "course_id": 102,
+            "timestamp": "2025-07-14T16:02:45.654321"
+        },
+        {
+            "student_id": 15,
+            "course_id": 101,
+            "timestamp": "2026-09-30T15:03:12.111184"
+        }
+    ],
+    "next_student_id": 17,
+    "next_teacher_id": 6,
+    "next_course_id": 104
+}
