@@ -1,6 +1,7 @@
 import json
 import datetime
 import csv
+import logging
 
 from app.student import StudentUser
 # Corrected Import: TeacherUser and Course now come from the same file.
@@ -57,6 +58,19 @@ class ScheduleManager:
 
                 self.next_student_id = data.get("next_student_id", 1)
                 self.next_teacher_id = data.get("next_teacher_id", 1)
+
+                self.next_lesson_id = data.get(
+                    "next_lesson_id",
+                    max(
+                        (
+                            lesson["lesson_id"]
+                            for course in self.courses
+                            for lesson in course.lessons
+                            ),
+                            default=0
+                            ) + 1
+                        )
+                
                 if self.courses:
                     self.next_course_id = max(course.id for course in self.courses) + 1
                 else:
@@ -75,7 +89,8 @@ class ScheduleManager:
             "finance_log": self.finance_log,
             "next_student_id": self.next_student_id,
             "next_teacher_id": self.next_teacher_id,
-            "next_course_id": self.next_course_id
+            "next_course_id": self.next_course_id,
+            "next_lesson_id": self.next_lesson_id
         }
         # TODO: Write 'data_to_save' to the JSON file.
         with open(self.data_path, 'w') as f:
@@ -96,7 +111,32 @@ class ScheduleManager:
                     "room": lesson["room"]
                 })
         return lessons_for_day
-                
+    
+    def cancel_lesson(self, lesson_id, reason):
+        """Cancels a lesson by its ID and records the reason."""
+
+        for course in self.courses:
+            for lesson in course.lessons:
+                if lesson["lesson_id"] == lesson_id:
+                    course.lessons.remove(lesson)
+                    self._save_data()
+
+                    logging.warning(
+                        "Lesson ID %s was cancelled. Reason: %s",
+                        lesson_id,
+                        reason
+                    )
+
+                    print(f"Lesson {lesson_id} cancelled successfully.")
+                    return True
+
+        logging.warning(
+            "Lesson cancellation failed: lesson_id=%s not found",
+            lesson_id
+        )
+        print(f"Error: Lesson {lesson_id} not found.")
+        return False
+    
     def add_student(self, name, course_id):
         course = self.find_course_by_id(course_id)
 
@@ -123,6 +163,12 @@ class ScheduleManager:
     def register_new_student(self, name, instrument):
         """Registers a new student into a course matching the instrument."""
 
+        logging.info(
+             "Registering new student: name=%s, instrument=%s",
+             name,
+             instrument
+             )
+
         matching_course = None
 
         for course in self.courses:
@@ -131,6 +177,10 @@ class ScheduleManager:
                 break
 
         if matching_course is None:
+            logging.warning(
+                "Student registration failed: no course for instrument=%s",
+                instrument
+                )
             return None
 
         student_id = self.next_student_id
@@ -143,7 +193,12 @@ class ScheduleManager:
         self.next_student_id += 1
 
         self._save_data()
-   
+
+        logging.info(
+            "Student registered successfully: student_id=%s, name=%s",
+            student_id,
+            name
+            )
         return new_student
 
     def add_teacher(self, name, speciality):
@@ -189,14 +244,21 @@ class ScheduleManager:
     def remove_course(self, course_id):
         for course in self.courses:
             if course.id == course_id:
+                # Remove this course from every enrolled student's records
+                for student in self.students:
+                    if course_id in student.enrolled_course_ids:
+                        student.enrolled_course_ids.remove(course_id)
+                        
+                        
                 self.courses.remove(course)
-
                 self._save_data()
-
+                
                 print(f"Course {course_id} removed.")
-                return
- 
+                return True
+            
+            
         print(f"Error: Course with ID {course_id} is not found.")
+        return False
 
     def list_students(self):
         print("\n--- Student List ---")
@@ -241,28 +303,46 @@ class ScheduleManager:
         print(f"Error: Teacher with ID {teacher_id} is not found.")
 
     def remove_student(self, student_id):
-        for s in self.students:
-            if s.id == student_id:
-                self.students.remove(s)
+        for student in self.students:
+            if student.id == student_id:
+                # Remove the student from every course's enrolment list
+                for course in self.courses:
+                    if student_id in course.enrolled_student_ids:
+                        course.enrolled_student_ids.remove(student_id)
 
+                self.students.remove(student)
                 self._save_data()
 
-                print(f"Student {s.id} removed. ")
-                return
-        print(f"Error: Student with ID {student_id} is not found")
+                print(f"Student {student_id} removed.")
+                return True
     
+        print(f"Error: Student with ID {student_id} is not found.")
+        return False
 
-    def remove_teacher(self,teacher_id):
-        for t in self.teachers:
-            if t.id == teacher_id:
-                self.teachers.remove(t)
 
+    def remove_teacher(self, teacher_id):
+        for teacher in self.teachers:
+            if teacher.id == teacher_id:
+                assigned_courses = [
+                    course for course in self.courses
+                    if course.teacher_id == teacher_id
+                    ]
+                
+                if assigned_courses:
+                    print(
+                        f"Cannot remove teacher {teacher_id}: "
+                        f"the teacher is still assigned to courses."
+                        )
+                    return False
+
+                self.teachers.remove(teacher)
                 self._save_data()
 
-                print(f"Teacher {t.id} removed.")
-                return
-        
+                print(f"Teacher {teacher_id} removed.")
+                return True
+
         print(f"Error: Teacher with ID {teacher_id} is not found.")
+        return False
         
     def check_in(self, student_id, course_id):
         student = self.find_student_by_id(student_id)
@@ -307,6 +387,10 @@ class ScheduleManager:
         student = self.find_student_by_id(student_id)
 
         if not student:
+            logging.warning(
+                "Payment failed: student_id=%s not found",
+                student_id
+                )
             print("Error: Student not found.")
             return False
 
@@ -321,6 +405,14 @@ class ScheduleManager:
         # Save the payment record
         self.finance_log.append(payment_record)
         self._save_data()
+
+        logging.info(
+            "Payment recorded: student_id=%s, amount=%s, method=%s",
+            student_id,
+            amount,
+            method
+            )
+
 
         print(f"Payment of {amount} for student {student_id} recorded.")
         return True
